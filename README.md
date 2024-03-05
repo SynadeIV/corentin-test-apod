@@ -1,4 +1,53 @@
 # PHP Technical Test
+ 
+## Documentation
+
+### Développement
+
+* Réalisé sur XAMPP Windows
+* PHP 8.1 & Symfony 6.1 => `composer.json` repris d'un [boilerplate](https://github.com/SynadeIV/symfony_base) personnel.
+
+### Installation 
+
+* .env : `DATABASE_URL` & `GOOGLE_CLIENT_ID` & `GOOGLE_CLIENT_SECRET` doivent être renseignés
+* `composer install`
+* `php bin/console d:d:c`
+* `php bin/console d:m:migrate`
+* `php bin/console nasa:fetch-today`
+
+### Conception
+
+#### CLI Command `NasaFetchTodayCommand`
+* J'ai fait le choix de ne pas passer de date, et d'utiliser la valeur par défaut soit la date du jour. Utilisation de `NasaPhotoHandler`.
+
+#### Service `NasaPhotoHandler`
+* Sauvegarder les données dans la base de données
+* Requête API NASA pour récupérer la photo du jour
+* `getNextImageAvailableData` pour récupérer la prochaine image qui match si le type n'est pas une image
+
+Pour checker si l'image est disponible en base de données, j'utilise les méthodes magiques Doctrine (ex: `findOneByDate`).  
+Etant donné que je suis parti sur un Datetime, je force l'heure à 00:00:00 pour vérifier si la date existe lorsque j'utilise ces méthodes magiques.
+
+#### Controller `NasaPhotoController` & `HomeController`
+* HomeController pour la page d'accueil
+* NasaPhotoController pour la page de la photo du jour. Retourne un message si jamais aucune photo n'est disponible.
+* isGranted pour vérifier si l'utilisateur à le rôle ROLE_GOOGLE
+
+#### Authentification
+* Utilisation des bundles `knpuniversity/oauth2-client-bundle` & `league/oauth2-google` pour l'authentification Google
+* `GoogleAuthenticator` pour la configuration de l'authentification Google et les redirections
+* `GoogleAuthController` pour les routes
+
+### Template
+* `base.html.twig` pour le layout
+* `home.html.twig` pour la homepage
+* `photo.html.twig` pour la page de la photo du jour, ou bien le message d'erreur
+
+![documentation](./public/img/documentation.png)
+![documentation](./public/img/nav1.png)
+![documentation](./public/img/nav2.png)
+
+---
 
 ## Instructions
 
